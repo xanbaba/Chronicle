@@ -1,1 +1,3 @@
-<Solution />
+<Solution>
+  <Project Path="Chronicle.Abstractions/Chronicle.Abstractions.csproj" />
+</Solution>
