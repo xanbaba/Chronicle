@@ -1,3 +1,3 @@
 ﻿namespace Chronicle.Abstractions;
 
-public record ReplicationOptions(string ConnectionString, string SlotName);
+public record ReplicationOptions(string ConnectionString);
