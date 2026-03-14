@@ -5,5 +5,6 @@ public record RawChangeEvent(
     string TableName,
     ChangeOperation Operation,
     IReadOnlyDictionary<string, object?> Before,
-    IReadOnlyDictionary<string, object?> After
+    IReadOnlyDictionary<string, object?> After,
+    ReplicationOffset Offset
 );
