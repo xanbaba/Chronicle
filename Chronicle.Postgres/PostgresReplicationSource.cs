@@ -23,24 +23,32 @@ public class PostgresReplicationSource : IReplicationSource
             throw new InvalidOperationException($"{nameof(StreamAsync)} is already running.");
         }
 
-        _connection = new LogicalReplicationConnection(postgresOptions.ConnectionString);
-        await _connection.Open(cancellationToken);
-
-        var slot = new PgOutputReplicationSlot(postgresOptions.SlotName);
-        var pgOutputOptions =
-            new PgOutputReplicationOptions(postgresOptions.PublicationName, PgOutputProtocolVersion.V1);
-
-        await foreach (var message in _connection.StartReplication(slot, pgOutputOptions, cancellationToken))
+        try
         {
-            var rawChangeEvent = await _pgOutputDecoder.DecodeAsync(message, cancellationToken);
-            if (rawChangeEvent is not null)
+            _connection = new LogicalReplicationConnection(postgresOptions.ConnectionString);
+            await _connection.Open(cancellationToken);
+
+            var slot = new PgOutputReplicationSlot(postgresOptions.SlotName);
+            var pgOutputOptions =
+                new PgOutputReplicationOptions(postgresOptions.PublicationName, PgOutputProtocolVersion.V1);
+
+            await foreach (var message in _connection.StartReplication(slot, pgOutputOptions, cancellationToken))
             {
-                yield return rawChangeEvent;
+                var rawChangeEvent = await _pgOutputDecoder.DecodeAsync(message, cancellationToken);
+                if (rawChangeEvent is not null)
+                {
+                    yield return rawChangeEvent;
+                }
+                else
+                {
+                    _connection.SetReplicationStatus(message.WalEnd);
+                }
             }
-            else
-            {
-                _connection.SetReplicationStatus(message.WalEnd);
-            }
+        }
+        finally
+        {
+            if (_connection != null) await _connection.DisposeAsync();
+            _connection = null;
         }
     }
 
