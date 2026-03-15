@@ -4,7 +4,7 @@ using Npgsql.Replication.PgOutput.Messages;
 
 namespace Chronicle.Postgres;
 
-public class PgOutputDecoder
+internal class PgOutputDecoder
 {
     private async Task<IReadOnlyDictionary<string, object?>> ReadRowsAsync(ReplicationTuple rows, CancellationToken cancellationToken = default)
     {

@@ -3,4 +3,4 @@ using NpgsqlTypes;
 
 namespace Chronicle.Postgres;
 
-public record PostgresReplicationOffset(NpgsqlLogSequenceNumber WalEnd) : ReplicationOffset;
+internal record PostgresReplicationOffset(NpgsqlLogSequenceNumber WalEnd) : ReplicationOffset;

@@ -2,5 +2,5 @@
 
 namespace Chronicle.Postgres;
 
-public record PostgresReplicationOptions(string ConnectionString, string SlotName, string PublicationName)
+internal record PostgresReplicationOptions(string ConnectionString, string SlotName, string PublicationName)
     : ReplicationOptions(ConnectionString);
