@@ -15,6 +15,7 @@ internal class PgOutputDecoder
         var rowsDictionary = new Dictionary<string, object?>();
         await foreach (var replicationValue in rows.WithCancellation(cancellationToken))
         {
+            // ToDo: handle toasted values
             if (replicationValue.IsUnchangedToastedValue)
                 rowsDictionary[replicationValue.GetFieldName()] = null;
             else
