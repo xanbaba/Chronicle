@@ -69,9 +69,4 @@ public class PostgresReplicationSource : IReplicationSource
         _connection.SetReplicationStatus(replicationOffset.WalEnd);
         return Task.CompletedTask;
     }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_connection != null) await _connection.DisposeAsync();
-    }
 }
