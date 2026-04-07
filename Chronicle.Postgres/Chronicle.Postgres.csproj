@@ -14,4 +14,8 @@
       <PackageReference Include="Npgsql" Version="10.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="Chronicle.Postgres.Tests" />
+    </ItemGroup>
+
 </Project>
