@@ -7,6 +7,7 @@ namespace Chronicle.Postgres;
 
 public class PostgresReplicationSource : IReplicationSource
 {
+    private readonly SemaphoreSlim _connectionLock = new(1, 1);
     private readonly PgOutputDecoder _pgOutputDecoder = new();
     private LogicalReplicationConnection? _connection;
 
@@ -18,16 +19,25 @@ public class PostgresReplicationSource : IReplicationSource
             throw new ArgumentException($"{nameof(options)} must be of type {nameof(PostgresReplicationOptions)}");
         }
 
-        if (_connection is not null)
+        await _connectionLock.WaitAsync(cancellationToken);
+
+        try
         {
-            throw new InvalidOperationException($"{nameof(StreamAsync)} is already running.");
+            if (_connection is not null)
+            {
+                throw new InvalidOperationException($"{nameof(StreamAsync)} is already running.");
+            }
+        
+            _connection = new LogicalReplicationConnection(postgresOptions.ConnectionString);
+            await _connection.Open(cancellationToken);
+        }
+        finally
+        {
+            _connectionLock.Release();
         }
 
         try
         {
-            _connection = new LogicalReplicationConnection(postgresOptions.ConnectionString);
-            await _connection.Open(cancellationToken);
-
             var slot = new PgOutputReplicationSlot(postgresOptions.SlotName);
             var pgOutputOptions =
                 new PgOutputReplicationOptions(postgresOptions.PublicationName, PgOutputProtocolVersion.V1);
