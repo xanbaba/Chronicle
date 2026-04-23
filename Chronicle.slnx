@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Chronicle.Abstractions/Chronicle.Abstractions.csproj" />
+  <Project Path="Chronicle.Core/Chronicle.Core.csproj" />
   <Project Path="Chronicle.Postgres.Tests/Chronicle.Postgres.Tests.csproj" />
   <Project Path="Chronicle.Postgres/Chronicle.Postgres.csproj" />
 </Solution>
