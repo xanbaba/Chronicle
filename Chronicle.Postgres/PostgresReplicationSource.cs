@@ -51,7 +51,6 @@ namespace Chronicle.Postgres;
 public class PostgresReplicationSource : IReplicationSource
 {
     private readonly SemaphoreSlim _connectionLock = new(1, 1);
-    private readonly PgOutputDecoder _pgOutputDecoder = new();
     private LogicalReplicationConnection? _connection;
 
     /// <summary>
@@ -106,7 +105,7 @@ public class PostgresReplicationSource : IReplicationSource
 
             await foreach (var message in _connection.StartReplication(slot, pgOutputOptions, cancellationToken))
             {
-                var rawChangeEvent = await _pgOutputDecoder.DecodeAsync(message, cancellationToken);
+                var rawChangeEvent = await PgOutputDecoder.DecodeAsync(message, cancellationToken);
                 if (rawChangeEvent is not null)
                 {
                     yield return rawChangeEvent;

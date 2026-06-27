@@ -28,7 +28,7 @@ namespace Chronicle.Postgres;
 /// Messages not resulting in a change event (Begin, Commit, Relation) return <c>null</c>.
 /// </para>
 /// </remarks>
-internal class PgOutputDecoder
+internal static class PgOutputDecoder
 {
     private static readonly IReadOnlyDictionary<string, object?> EmptyRow =
         new Dictionary<string, object?>();
@@ -52,7 +52,7 @@ internal class PgOutputDecoder
     /// Note that this increases WAL volume significantly for tables with large columns.
     /// </para>
     /// </remarks>
-    private async Task<IReadOnlyDictionary<string, object?>> ReadRowsAsync(ReplicationTuple rows,
+    private static async Task<IReadOnlyDictionary<string, object?>> ReadRowsAsync(ReplicationTuple rows,
         CancellationToken cancellationToken = default)
     {
         var rowsDictionary = new Dictionary<string, object?>();
@@ -76,7 +76,7 @@ internal class PgOutputDecoder
     /// A <see cref="RawChangeEvent"/> for data messages (Insert, Update, Delete),
     /// or <c>null</c> for transaction control messages (Begin, Commit, Relation).
     /// </returns>
-    public async Task<RawChangeEvent?> DecodeAsync(PgOutputReplicationMessage message,
+    public static async Task<RawChangeEvent?> DecodeAsync(PgOutputReplicationMessage message,
         CancellationToken cancellationToken = default)
     {
         if (message is InsertMessage insertMessage)
